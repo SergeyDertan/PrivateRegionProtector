@@ -1,0 +1,68 @@
+name: PrivateRegionProtector
+main: Sergey_Dertan\PrivateRegionProtector\PrivateRegionProtectorMainFolder\PrivateRegionProtectorMain
+version: PreFinal_3.3
+api: 1.7.0
+author: Sergey_Dertan
+load: STARTUP
+description:
+commands:
+ privatearea:
+  aliases: [pa]
+  description: "Help of Private Region Protector"
+  permission: prp.p
+permissions:
+ privateregionprotector:
+  description: Top permissions of PrivateRegionProtector
+  default: op
+  children:
+   prp.p:
+    descrition: "Allow to protect areas"
+    default: true
+   prp.breakall:
+    descrition: "Allow to change all areas"
+    default: op
+   prp.maxsize:
+    default: op
+    description: "Allow to create area with any size"
+   prp.doall:
+    default: op
+    description: "Allow to do all"
+   prp.maxareas:
+    default: op
+    description: "Allow to create areas bigger default"
+   prp.flag:
+    default: true
+    description: "Allow to use flags"
+   flag.pvp:
+    default: true
+    descriprion: "Allow to use flag pvp"
+   flag.use:
+    default: true
+    descriprion: "Allow to use flag use"
+   flag.entry:
+    default: op
+    descriprion: "Allow to use flag entry"
+  flag.send-chat:
+    default: op
+    descriprion: "Allow to use flag send-chat"
+  flag.explode:
+    default: op
+    descriprion: "Allow to use flag explode"
+  flag.burn:
+    default: op
+    descriprion: "Allow to use flag burn"
+  flag.build:
+    default: true
+    descriprion: "Allow to use flag build"
+  flag.sleep:
+    default: op
+    descriprion: "Allow to use flag sleep"
+  flag.mob-damage:
+    default: op
+    descriprion: "Allow to use flag mob-damage"
+  flag.tnt-explode:
+    default: op
+    descriprion: "Allow to use flag tnt-explode"
+  flag.drop-item:
+   default: op
+   description: "Allow to use flag drop-item"
