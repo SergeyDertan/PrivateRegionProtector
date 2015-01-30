@@ -35,6 +35,7 @@ class PrivateRegionProtectorMain extends PB implements L
     function onEnable()
     {
         $this->getServer()->getPluginManager()->registerEvents(new PrivateRegionProtectorEventListener($this), $this);
+        @mkdir($this->getDataFolder());
         $this->areas = new Config($this->getDataFolder() . "Areas.yml", Config::YAML, array());
         $this->config = new Config($this->getDataFolder() . "Settings.yml", Config::YAML, array(
             "MaxAreas" => 3,
