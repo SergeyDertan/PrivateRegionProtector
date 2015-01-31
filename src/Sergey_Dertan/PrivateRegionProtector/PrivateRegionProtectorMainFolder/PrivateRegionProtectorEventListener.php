@@ -1,6 +1,7 @@
 <?php
 namespace Sergey_Dertan\PrivateRegionProtector\PrivateRegionProtectorMainFolder;
 
+use pocketmine\block\Block;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityCombustEvent;
@@ -17,7 +18,6 @@ use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
 use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\item\WoodenAxe;
 use pocketmine\math\Vector3;
@@ -46,9 +46,13 @@ class PrivateRegionProtectorEventListener implements Listener
 
     /**
      * @param PlayerCommandPreprocessEvent $e
+     * @return bool
      */
     function CMDUse(PlayerCommandPreprocessEvent $e)
     {
+        if ($e->isCancelled()) {
+            return true;
+        }
         if ($this->plugin->checkF($e->getPlayer(), "cmd-use", "deny", false) and !$e->getPlayer()->hasPermission("prp.doall")) {
             $e->setCancelled();
             $e->getPlayer()->sendMessage(F::RED . "[PRP] You can't use commands in this area");
@@ -57,9 +61,13 @@ class PrivateRegionProtectorEventListener implements Listener
 
     /**
      * @param PlayerBucketEmptyEvent $e
+     * @return bool|void
      */
     function bucketEmpty(PlayerBucketEmptyEvent $e)
     {
+        if ($e->isCancelled()) {
+            return true;
+        }
         if ($this->plugin->checkF($e->getPlayer(), "bucket-use", "deny", true) and $e->getPlayer()->hasPermission("prp.doall")) {
             $e->setCancelled();
             $e->getPlayer()->sendMessage(F::RED . "[PRP] You can't use bucket in this area");
@@ -70,9 +78,13 @@ class PrivateRegionProtectorEventListener implements Listener
 
     /**
      * @param PlayerBucketFillEvent $e
+     * @return bool|void
      */
     function bucketFillEvent(PlayerBucketFillEvent $e)
     {
+        if ($e->isCancelled()) {
+            return true;
+        }
         if ($this->plugin->checkF($e->getPlayer(), "bucket-use", "deny", true) and $e->getPlayer()->hasPermission("prp.doall")) {
             $e->setCancelled();
             $e->getPlayer()->sendMessage(F::RED . "[PRP] You can't use bucket in this area");
@@ -83,9 +95,13 @@ class PrivateRegionProtectorEventListener implements Listener
 
     /**
      * @param PlayerDropItemEvent $e
+     * @return bool|void
      */
     function ItemDrop(PlayerDropItemEvent $e)
     {
+        if ($e->isCancelled()) {
+            return true;
+        }
         if ($this->plugin->checkF($e->getPlayer(), "drop-item", "deny", true) and $e->getPlayer()->hasPermission("prp.doall")) {
             $e->setCancelled();
             $e->getPlayer()->sendMessage(F::RED . "[PRP] You can't drop item in this area");
@@ -96,9 +112,13 @@ class PrivateRegionProtectorEventListener implements Listener
 
     /**
      * @param PlayerBedEnterEvent $e
+     * @return bool
      */
     function noBed(PlayerBedEnterEvent $e)
     {
+        if ($e->isCancelled()) {
+            return true;
+        }
         if ($this->plugin->checkF($e->getPlayer(), "sleep", "deny", false) and !$e->getPlayer()->hasPermission("prp.doall")) {
             $e->setCancelled();
             $e->getPlayer()->sendMessage(F::RED . "[PRP] You can't use bed in this area");
@@ -106,11 +126,15 @@ class PrivateRegionProtectorEventListener implements Listener
     }
 
 
-    /***
+    /**
      * @param EntityDamageEvent $e
+     * @return bool
      */
     function OffPvP(EntityDamageEvent $e)
     {
+        if ($e->isCancelled()) {
+            return true;
+        }
         if ($e instanceof EntityDamageByEntityEvent and $e->getDamager() instanceof Player and $e->getEntity() instanceof Player) {
             if ($this->plugin->checkF($e->getEntity(), "pvp", "deny", false)) {
                 $e->setCancelled();
@@ -119,11 +143,15 @@ class PrivateRegionProtectorEventListener implements Listener
         }
     }
 
-    /***
+    /**
      * @param EntityDamageEvent $e
+     * @return bool
      */
     public function EntityDE(EntityDamageEvent $e)
     {
+        if ($e->isCancelled()) {
+            return true;
+        }
         if ($e instanceof EntityDamageEvent) {
             if ($e->getEntity() instanceof Player) {
                 if ($this->plugin->checkF($e->getEntity(), "god-mode", "allow", false)) {
@@ -134,21 +162,29 @@ class PrivateRegionProtectorEventListener implements Listener
     }
 
 
-    /***
+    /**
      * @param EntityExplodeEvent $e
+     * @return bool
      */
     function EntityExplode(EntityExplodeEvent $e)
     {
+        if ($e->isCancelled()) {
+            return true;
+        }
         if ($this->plugin->FEntity($e->getEntity(), "explode", "deny")) {
             $e->setCancelled();
         }
     }
 
-    /***
+    /**
      * @param EntityCombustEvent $e
+     * @return bool
      */
     function EntityCombust(EntityCombustEvent $e)
     {
+        if ($e->isCancelled()) {
+            return true;
+        }
         if ($e->getEntity() instanceof Player) {
             if ($this->plugin->checkF($e->getEntity(), "burn", "deny", false)) {
                 $e->setCancelled();
@@ -156,11 +192,15 @@ class PrivateRegionProtectorEventListener implements Listener
         }
     }
 
-    /***
+    /**
      * @param EntityRegainHealthEvent $e
+     * @return bool
      */
     function EntityRegain(EntityRegainHealthEvent $e)
     {
+        if ($e->isCancelled()) {
+            return true;
+        }
         $entity = $e->getEntity();
         if ($entity instanceof Player) {
             if ($this->plugin->checkF($e->getEntity(), "regain", "deny", false) and !$entity->hasPermission("prp.doall")) {
@@ -171,9 +211,13 @@ class PrivateRegionProtectorEventListener implements Listener
 
     /***
      * @param EntityTeleportEvent $e
+     * @return bool
      */
     function EntityTeleport(EntityTeleportEvent $e)
     {
+        if ($e->isCancelled()) {
+            return true;
+        }
         $entity = $e->getEntity();
         $to = $e->getTo();
         if ($entity instanceof Player) {
@@ -190,10 +234,13 @@ class PrivateRegionProtectorEventListener implements Listener
 
     /***
      * @param PlayerChatEvent $e
+     * @return bool
      */
-
     function PlayerChat(PlayerChatEvent $e)
     {
+        if ($e->isCancelled()) {
+            return true;
+        }
         $player = $e->getPlayer();
         if ($this->plugin->checkF($player, "send-chat", "deny", false) and !$player->hasPermission("prp.doall")) {
             if (!$player->hasPermission("prp.doall")) {
@@ -203,20 +250,6 @@ class PrivateRegionProtectorEventListener implements Listener
         }
     }
 
-    /***
-     * @param PlayerMoveEvent $e
-     */
-    function PlayerMove(PlayerMoveEvent $e)
-    {
-        $entity = $e->getPlayer();
-        if ($entity instanceof Player and $e instanceof PlayerMoveEvent) {
-            if ($this->plugin->checkF($entity, "entry", "deny", true) and !$entity->hasPermission("prp.doall")) {
-                $from = $e->getFrom();
-                $entity->teleport(new Vector3($from->x, $from->y, $from->y));
-                $entity->sendMessage(F::RED . "[PRP] You don't have permissions(ENTRY)");
-            }
-        }
-    }
 
     /***
      * @param PlayerQuitEvent $e
@@ -244,11 +277,18 @@ class PrivateRegionProtectorEventListener implements Listener
 
     /**
      * @param PlayerInteractEvent $e
+     * @return bool
      */
     function PlayerInteractEvent(PlayerInteractEvent $e)
     {
         $player = $e->getPlayer();
         $block = $e->getBlock();
+        if ($e->isCancelled()) {
+            return true;
+        }
+        if (!in_array($block->getId(), array(Block::CHEST, Block::TRAPDOOR, Block::WOOD_DOOR_BLOCK, Block::DOOR_BLOCK, Block::IRON_DOOR_BLOCK, Block::FURNACE, Block::BURNING_FURNACE))) {
+            return true;
+        }
         $x = $block->getFloorX();
         $y = $block->getFloorY();
         $z = $block->getFloorZ();
@@ -304,13 +344,18 @@ class PrivateRegionProtectorEventListener implements Listener
                 $player->sendMessage(F::RED . "[PRP] Area not exists");
             }
         }
+        return true;
     }
 
     /***
      * @param BlockPlaceEvent $e
+     * @return bool
      */
     function BlockPlaceEvent(BlockPlaceEvent $e)
     {
+        if ($e->isCancelled()) {
+            return true;
+        }
         $player = $e->getPlayer();
         $block = $e->getBlock();
         $x = $block->getFloorX();
@@ -332,9 +377,13 @@ class PrivateRegionProtectorEventListener implements Listener
 
     /***
      * @param BlockBreakEvent $e
+     * @return bool
      */
     function BlockBreakEvent(BlockBreakEvent $e)
     {
+        if ($e->isCancelled()) {
+            return true;
+        }
         $player = $e->getPlayer();
         $block = $e->getBlock();
         $x = $block->getFloorX();
@@ -347,7 +396,6 @@ class PrivateRegionProtectorEventListener implements Listener
                     if ($this->plugin->checkCoordinates($info, $x, $y, $z)) {
                         $e->setCancelled();
                         $player->sendMessage(F::RED . "[PRP] You don`t have permissions!(BLOCK_BREAK)");
-
                     } else {
                         continue;
                     }
