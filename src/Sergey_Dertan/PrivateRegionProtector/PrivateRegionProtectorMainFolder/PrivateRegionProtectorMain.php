@@ -13,7 +13,7 @@ use pocketmine\utils\TextFormat as F;
 
 /*
 * Warning?Ну не error же!
-* Данный плагин добавляет привататные территории дял игроков на ваш сервер
+* Данный плагин добавляет привататные территории дял игроков на ваш сервер.
 * Пишу весь текст выводимый в чат из-за того что частое переключение языка мешает.
 * Есть вопрос?Напишите мне в ВК http://vk.com/superator , в GMail superator2018@gmail.com или в Skype Sergey44668800
 */
@@ -29,18 +29,19 @@ use pocketmine\utils\TextFormat as F;
  */
 class PrivateRegionProtectorMain extends PB implements L
 {
-    private $config;
-    public $pos1 = array(),$pos2 = array(), $areas, $forInfo,$forInfoCheckPerm, $forCF;
+    private $config, $br;
+    public $pos1 = array(), $pos2 = array(), $areas, $forInfo, $forInfoCheckPerm, $forCF;
 
     function onEnable()
     {
+	@mkdir($this->getDataFolder());
         $this->getServer()->getPluginManager()->registerEvents(new PrivateRegionProtectorEventListener($this), $this);
-        @mkdir($this->getDataFolder());
         $this->areas = new Config($this->getDataFolder() . "Areas.yml", Config::YAML, array());
         $this->config = new Config($this->getDataFolder() . "Settings.yml", Config::YAML, array(
             "MaxAreas" => 3,
             "MaxAreaSize" => 30000,
             "DefaultFlags" => array("pvp" => "allow", "build" => "deny", "entry" => "allow", "god-mode" => "deny", "use" => "deny", "send-chat" => "allow", "explode" => "allow", "burn" => "allow", "regain" => "allow", "teleport" => "allow", "mob-damage" => "allow", "sleep" => "allow", "tnt-explode" => "allow", "bucket-use" => "deny", "drop-item" => "allow", "cmd-use" => "allow")));
+            $this->br = new Config($this->getDataFolder() . "BugReports.yml", Config::YAML, array());
         $this->getLogger()->info(F::GREEN . "Private Region Protector V" . $this->getDescription()->getVersion() . " by Sergey Dertan load!");
     }
 
@@ -372,6 +373,14 @@ class PrivateRegionProtectorMain extends PB implements L
                                 if (isset($this->pos1[strtolower($s->getName())])) unset($this->pos1[$s->getName()]);
                                 if (isset($this->pos2[strtolower($s->getName())])) unset($this->pos2[$s->getName()]);
                                 $s->sendMessage(F::YELLOW . "[PRP] Selected cleared!");
+                            } elseif ($args[0] == "bugreport"){
+                            if(!isset($args[0])){
+                            $s->sendMessage(F::RED . "[PRP] Используйте /pa bugreport <СООБЩЕНИЕ>");
+                            return true;
+                            }
+                            $this->br->set("Отзыв " . count($this->br->getAll()) +1 . " от " . $s->getName() , $args);
+                            $this->br->save();
+                            $s->sendMessage(F::YELLOW . "[PRP] Спасибо за отзыв!");
                             } elseif (strtolower($args[0]) != "create" || "pos1" || "pos2" || "remove" || "pinfo" || "info" || "addmember" || "list" || "addowner" || "removemember" || "wand" || "flag") {
                                 $s->sendMessage(F::RED . "Sub command " . $args[0] . " does not exists!");
                                 $s->sendMessage(F::RED . "Use /pa,to see all commands!");
