@@ -1,7 +1,7 @@
 name: PrivateRegionProtector
 main: Sergey_Dertan\PrivateRegionProtector\PrivateRegionProtectorMainFolder\PrivateRegionProtectorMain
-version: PreFinal_3.3
-api: 1.7.0
+version: PreFinal_3.5
+api: 1.8.0
 author: Sergey_Dertan
 load: STARTUP
 description:
